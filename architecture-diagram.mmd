@@ -1,0 +1,57 @@
+graph TB
+    subgraph "Layer 1: Business Specification"
+        F[Features/Gherkin<br/>homepage.feature<br/>login.feature]
+    end
+    
+    subgraph "Layer 2: Test Implementation"
+        S[Step Definitions<br/>navigation.steps.ts<br/>common.steps.ts]
+        W[Custom World<br/>Browser Context<br/>Page Objects Registry]
+        H[Hooks<br/>Before/After<br/>Screenshots]
+    end
+    
+    subgraph "Layer 3: Page Objects"
+        BP[BasePage<br/>Common Methods]
+        HP[HomePage]
+        LP[LoginPage]
+        OP[Other Pages...]
+    end
+    
+    subgraph "Layer 4: Utilities"
+        U1[Helpers<br/>Click, Fill, Wait]
+        U2[Constants<br/>URLs, Timeouts]
+        U3[Logger<br/>Test Logging]
+    end
+    
+    subgraph "Layer 5: Browser Automation"
+        PW[Playwright API<br/>Browser Control]
+    end
+    
+    F -->|executes| S
+    S -->|uses| W
+    S -->|interacts via| HP
+    S -->|interacts via| LP
+    S -->|interacts via| OP
+    W -->|initializes| HP
+    W -->|initializes| LP
+    W -->|initializes| OP
+    H -->|lifecycle| W
+    HP -->|extends| BP
+    LP -->|extends| BP
+    OP -->|extends| BP
+    BP -->|uses| U1
+    BP -->|uses| U2
+    S -->|uses| U3
+    BP -->|calls| PW
+    
+    style F fill:#e1f5fe
+    style S fill:#fff3e0
+    style W fill:#fff3e0
+    style H fill:#fff3e0
+    style BP fill:#f3e5f5
+    style HP fill:#f3e5f5
+    style LP fill:#f3e5f5
+    style OP fill:#f3e5f5
+    style U1 fill:#e8f5e9
+    style U2 fill:#e8f5e9
+    style U3 fill:#e8f5e9
+    style PW fill:#fce4ec

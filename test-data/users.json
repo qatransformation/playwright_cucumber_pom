@@ -1,0 +1,44 @@
+{
+  "validUsers": [
+    {
+      "name": "Test User",
+      "email": "test.user@example.com",
+      "password": "ValidPass123!",
+      "role": "admin"
+    },
+    {
+      "name": "Regular User",
+      "email": "regular@example.com",
+      "password": "RegularPass123!",
+      "role": "user"
+    }
+  ],
+  "invalidUsers": [
+    {
+      "email": "invalid@example.com",
+      "password": "WrongPassword",
+      "expectedError": "Invalid credentials"
+    },
+    {
+      "email": "",
+      "password": "password123",
+      "expectedError": "Email es requerido"
+    },
+    {
+      "email": "test@example.com",
+      "password": "",
+      "expectedError": "Password es requerido"
+    }
+  ],
+  "testData": {
+    "searchQueries": {
+      "valid": ["playwright", "automation", "testing"],
+      "invalid": ["xyzabc123notfound"]
+    },
+    "urls": {
+      "production": "https://playwright.dev",
+      "staging": "https://staging.playwright.dev",
+      "local": "http://localhost:3000"
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "name": "playwright-cucumber-framework",
+  "version": "1.0.0",
+  "description": "Playwright + Cucumber + Page Object Model - UI Automation Framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "cucumber-js",
+    "test:smoke": "cucumber-js --tags @smoke",
+    "test:parallel": "cucumber-js --parallel 2",
+    "test:parallel:video": "RECORD_VIDEO=true cucumber-js --parallel 2 && npm run report:generate && npm run test:report",
+    "test:specific": "cucumber-js features/",
+    "test:playwright": "playwright test",
+    "test:headed": "HEADLESS=false cucumber-js",
+    "test:video": "RECORD_VIDEO=true cucumber-js",
+    "test:run": "RECORD_VIDEO=true npm test && npm run test:report",
+    "test:report": "open test-results/index.html",
+    "report:generate": "node generate-report.js",
+    "posttest": "npm run report:generate",
+    "clean": "rm -rf test-results",
+    "pretest": "npm run clean"
+  },
+  "keywords": [
+    "playwright",
+    "cucumber",
+    "page-object-model",
+    "automation",
+    "testing"
+  ],
+  "author": "QA Transformation to IA - www.qatransformation.ai",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@cucumber/cucumber": "^12.6.0",
+    "@cucumber/pretty-formatter": "^3.0.0",
+    "@playwright/test": "^1.58.2",
+    "@types/node": "^25.2.3",
+    "cucumber-html-reporter": "^7.2.0",
+    "multiple-cucumber-html-reporter": "^3.10.0",
+    "ts-node": "^10.9.2"
+  }
+}

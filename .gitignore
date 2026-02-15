@@ -1,0 +1,40 @@
+
+# Dependencias
+node_modules/
+package-lock.json
+yarn.lock
+
+# Build and distribution
+dist/
+build/
+
+# Test results
+test-results/
+playwright-report/
+blob-report/
+screenshots/
+videos/
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Playwright
+playwright/.cache/
+playwright/.auth/

@@ -1,0 +1,208 @@
+name: E2E Tests CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 2 AM
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Test environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - production
+      browser:
+        description: 'Browser to use'
+        required: true
+        default: 'chrome'
+        type: choice
+        options:
+          - chrome
+          - firefox
+          - edge
+
+jobs:
+  # Job 1: Quick tests on dev with Chrome (for PRs)
+  test-smoke:
+    name: Smoke Tests (Dev + Chrome)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      
+      - name: Run smoke tests
+        run: TEST_ENV=dev BROWSER=chrome npm run test:smoke
+        env:
+          CI: true
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: smoke-test-results
+          path: test-results/
+          retention-days: 7
+
+  # Job 2: Complete tests on multiple environments and browsers
+  test-matrix:
+    name: Tests (${{ matrix.environment }} + ${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'schedule'
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [dev, staging]
+        browser: [chrome, firefox]
+        exclude:
+          # Don't run Firefox on staging to save time
+          - environment: staging
+            browser: firefox
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      
+      - name: Run E2E tests
+        run: TEST_ENV=${{ matrix.environment }} BROWSER=${{ matrix.browser }} npm test
+        env:
+          CI: true
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results-${{ matrix.browser }}-${{ matrix.environment }}
+          path: test-results/
+          retention-days: 30
+      
+      - name: Upload HTML report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: html-report-${{ matrix.browser }}-${{ matrix.environment }}
+          path: test-results/index.html
+          retention-days: 30
+
+  # Job 3: Production tests (only on main)
+  test-production:
+    name: Production Tests (Chrome)
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      
+      - name: Run production tests
+        run: TEST_ENV=production BROWSER=chrome npm test
+        env:
+          CI: true
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: production-test-results
+          path: test-results/
+          retention-days: 90
+
+  # Job 4: Manual trigger with custom parameters
+  test-custom:
+    name: Custom Tests (${{ github.event.inputs.environment }} + ${{ github.event.inputs.browser }})
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      
+      - name: Run custom tests
+        run: TEST_ENV=${{ github.event.inputs.environment }} BROWSER=${{ github.event.inputs.browser }} npm test
+        env:
+          CI: true
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: custom-test-results-${{ github.event.inputs.browser }}-${{ github.event.inputs.environment }}
+          path: test-results/
+          retention-days: 30
+
+  # Job 5: Publish consolidated report
+  publish-report:
+    name: Publish Report
+    runs-on: ubuntu-latest
+    needs: [test-matrix]
+    if: always()
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+      
+      - name: Publish HTML report
+        uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./html-report-chrome-dev
+          destination_dir: reports/${{ github.run_number }}

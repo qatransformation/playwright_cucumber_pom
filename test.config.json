@@ -1,0 +1,66 @@
+{
+  "environments": {
+    "local": {
+      "name": "local",
+      "baseUrl": "http://localhost:3000",
+      "timeout": 30000,
+      "slowMo": 100
+    },
+    "dev": {
+      "name": "dev",
+      "baseUrl": "https://demo.playwright.dev/todomvc",
+      "timeout": 30000,
+      "slowMo": 0
+    },
+    "staging": {
+      "name": "staging",
+      "baseUrl": "https://staging.example.com",
+      "timeout": 45000,
+      "slowMo": 0
+    },
+    "production": {
+      "name": "production",
+      "baseUrl": "https://production.example.com",
+      "timeout": 60000,
+      "slowMo": 0
+    }
+  },
+  "browsers": {
+    "chrome": {
+      "channel": "chrome",
+      "headless": true,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    "firefox": {
+      "channel": null,
+      "headless": true,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    "safari": {
+      "channel": null,
+      "headless": false,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    "edge": {
+      "channel": "msedge",
+      "headless": true,
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    }
+  },
+  "default": {
+    "environment": "dev",
+    "browser": "chrome"
+  }
+}
