@@ -88,8 +88,23 @@ test-results/      → Reports, Screenshots & Videos
 - `README.md` → Getting started and setup
 - `ARCHITECTURE.md` → Detailed architecture
 - `USAGE_GUIDE.md` → Examples and patterns
+- `PIPELINE_CONFIGURATION.md` → CI/CD setup (Jenkins, GitHub Actions, etc.)
 - `PROJECT_SUMMARY.md` → Complete summary
 - `VALIDATION.md` → Validation checklist
+- `Jenkinsfile` → Jenkins pipeline with video recording
+
+## 🔄 CI/CD Quick Start
+
+```bash
+# Jenkins - Use included Jenkinsfile
+# Features: video recording, HTML reports, artifact archiving
+
+# GitHub Actions - Use .github/workflows/e2e-tests.yml
+# Matrix testing across environments and browsers
+
+# Any CI/CD platform
+TEST_ENV=staging BROWSER=chrome RECORD_VIDEO=true npm test
+```
 
 ## 🎯 Create New Test (3 Steps)
 

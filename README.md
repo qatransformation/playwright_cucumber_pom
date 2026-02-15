@@ -373,16 +373,36 @@ BROWSER=chromium-mobile npm test
 
 ### For CI/CD Pipelines
 
+The framework includes complete CI/CD pipeline configurations:
+
+**Jenkins Pipeline** (Jenkinsfile)
+```groovy
+# The repository includes a complete Jenkinsfile with:
+# - Video recording enabled
+# - Automatic report generation
+# - Artifact archiving (videos, screenshots, reports)
+# - Parameterized execution
+```
+
+**GitHub Actions** (.github/workflows/e2e-tests.yml)
 ```yaml
 # GitHub Actions example
 - name: Run tests on staging with Firefox
   run: TEST_ENV=staging BROWSER=firefox npm test
-
-# Jenkins example
-sh 'TEST_ENV=production BROWSER=chrome npm test'
 ```
 
-See **[PIPELINE_CONFIGURATION.md](./PIPELINE_CONFIGURATION.md)** for complete examples of GitHub Actions, GitLab CI, Jenkins, and Azure DevOps.
+**GitLab CI / Jenkins / Azure DevOps**
+```bash
+# Generic command for any CI/CD platform
+TEST_ENV=production BROWSER=chrome RECORD_VIDEO=true npm test
+```
+
+See **[PIPELINE_CONFIGURATION.md](./PIPELINE_CONFIGURATION.md)** for:
+- ✅ Complete Jenkinsfile documentation with video recording
+- ✅ GitHub Actions matrix strategies
+- ✅ GitLab CI, Jenkins, and Azure DevOps examples
+- ✅ Environment variable configuration
+- ✅ Artifact publishing and report generation
 
 ### Custom Fixtures (Environment Configuration)
 

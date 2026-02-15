@@ -269,6 +269,46 @@ test:chrome:production:
 
 ### Jenkins Pipeline
 
+**Configuration File:** `Jenkinsfile` (included in the repository root)
+
+The framework includes a complete `Jenkinsfile` configured for:
+- ✅ **Video recording enabled** by default
+- ✅ **Automatic HTML report generation**
+- ✅ **Artifact archiving** (videos, screenshots, reports)
+- ✅ **Parameterized execution** (environment, browser)
+- ✅ **Post-build actions** (success/failure notifications)
+
+**Key Features:**
+```groovy
+environment {
+  TEST_ENV = 'staging'       // Configurable: dev, staging, production
+  BROWSER = 'chrome'         // Configurable: chrome, firefox, edge
+  RECORD_VIDEO = 'true'      // Video recording enabled
+  HEADLESS = 'true'          // Headless mode
+}
+```
+
+**Pipeline Stages:**
+1. **Checkout** - Get code from repository
+2. **Install Dependencies** - Install npm packages and Playwright browsers
+3. **Run E2E Tests with Video** - Execute tests with video recording
+4. **Generate HTML Report** - Create visual test report
+5. **Publish Results** - Publish HTML report and archive artifacts
+
+**Artifacts Published:**
+- Complete HTML test report
+- Video recordings (`.webm`) in `test-results/videos/`
+- Failure screenshots (`.png`) in `test-results/screenshots/`
+- Cucumber JSON report
+
+**Usage:**
+1. Create a Pipeline job in Jenkins
+2. Point to your repository URL
+3. Jenkins will automatically detect the `Jenkinsfile`
+4. Configure credentials if repository is private
+5. Run the pipeline
+
+**Example with Parameters:**
 ```groovy
 pipeline {
     agent any
@@ -284,44 +324,33 @@ pipeline {
             choices: ['chrome', 'firefox', 'edge'],
             description: 'Browser to use'
         )
+        booleanParam(
+            name: 'RECORD_VIDEO',
+            defaultValue: true,
+            description: 'Enable video recording'
+        )
     }
     
     stages {
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm ci'
-                sh 'npx playwright install --with-deps'
-            }
-        }
-        
         stage('Run Tests') {
             steps {
                 sh """
                     TEST_ENV=${params.TEST_ENV} \
                     BROWSER=${params.BROWSER} \
+                    RECORD_VIDEO=${params.RECORD_VIDEO} \
                     npm test
                 """
             }
         }
-        
-        stage('Publish Results') {
-            steps {
-                publishHTML([
-                    reportDir: 'test-results',
-                    reportFiles: 'index.html',
-                    reportName: 'Test Report'
-                ])
-            }
-        }
-    }
-    
-    post {
-        always {
-            archiveArtifacts artifacts: 'test-results/**/*', allowEmptyArchive: true
-        }
     }
 }
 ```
+
+**Access Results:**
+- Test report available at: `${BUILD_URL}Cucumber_Test_Report/`
+- Videos and artifacts in Jenkins build artifacts section
+
+For the complete implementation, see the `Jenkinsfile` in the repository root.
 
 ### Azure DevOps
 

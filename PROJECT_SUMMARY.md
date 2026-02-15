@@ -48,11 +48,15 @@ repo/
 ├── 📄 playwright.config.ts              # Playwright configuration
 ├── 📄 tsconfig.json                     # TypeScript configuration
 ├── 📄 package.json                      # Dependencies and scripts
+├── 📄 Jenkinsfile                       # Jenkins pipeline configuration
 ├── 📄 .env.example                      # Example environment variables
 ├── 📄 .gitignore                        # Files ignored by Git
+├── 📂 .github/workflows/                # GitHub Actions workflows
+│   └── e2e-tests.yml                    # CI/CD configuration
 │
 ├── 📖 README.md                         # Main documentation
 ├── 📖 ARCHITECTURE.md                   # Detailed architecture
+├── 📖 PIPELINE_CONFIGURATION.md         # CI/CD setup and Jenkins guide
 ├── 📖 USAGE_GUIDE.md                    # Usage guide and examples
 └── 📖 PROJECT_SUMMARY.md                # This file
 ```
